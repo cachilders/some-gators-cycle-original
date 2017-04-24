@@ -1,18 +1,18 @@
-import {input, div, p, img} from '@cycle/dom'
-import xs from 'xstream'
+import {input, div, p, img} from '@cycle/dom';
+import xs from 'xstream'; // (https://github.com/cachilders/xstream)
 import assets from './assets';
 
 export function App (sources) {
   const width$ = sources.DOM.select('.width').events('input')
-    .map(e => e.target.value).startWith(410);
+    .map(e => e.target.value).startWith(410); // map, but for like events in time
   const index$ = sources.DOM.select('img').events('click')
-    .mapTo(+1)
-    .fold((x, y) => x + y < assets.slides.length ? x + y : 0, 0);
-
-  const state$ = xs.combine(index$, width$);
+    .mapTo(1) // turns a whatever into the supplied value every time
+    .fold( // like reduce, but for streams (https://github.com/cachilders/xstream#fold)
+      (acc, int) => acc + int < assets.slides.length ? acc + int : 0, 0
+    );
   
-  const vtree$ = state$.map(([index, width]) =>
-    div({style: {
+  const vtree$ = xs.combine(index$, width$).map(([index, width]) =>
+    div({style: { // this is HyperScript (https://github.com/hyperhype/hyperscript)
       textAlign: 'center',
       fontFamily: 'sans-serif',
       fontWeight: '300'
@@ -45,9 +45,9 @@ export function App (sources) {
         })
       ])
     ])
-  )
+  );
   const sinks = {
-    DOM: vtree$
-  }
-  return sinks
+    DOM: vtree$ // the $ isn't magic – it's just a naming convention for strings
+  };
+  return sinks;
 }
