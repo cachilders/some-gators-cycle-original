@@ -1,13 +1,13 @@
 import {input, div, p, img} from '@cycle/dom';
-import xs from 'xstream'; // (https://github.com/cachilders/xstream)
+import xs from 'xstream'; // (https://github.com/staltz/xstream)
 import assets from './assets';
 
 export function App (sources) {
   const width$ = sources.DOM.select('.width').events('input')
-    .map(e => e.target.value).startWith(410); // map, but for like events in time
+    .map(e => e.target.value).startWith(410); // map, but for events in time
   const index$ = sources.DOM.select('img').events('click')
-    .mapTo(1) // turns a whatever into the supplied value every time
-    .fold( // like reduce, but for streams (https://github.com/cachilders/xstream#fold)
+    .mapTo(1) // converts stream events into the supplied value every time
+    .fold( // like reduce, but for streams (https://github.com/staltz/xstream#fold)
       (acc, int) => acc + int < assets.slides.length ? acc + int : 0, 0
     );
   
@@ -47,7 +47,7 @@ export function App (sources) {
     ])
   );
   const sinks = {
-    DOM: vtree$ // the $ isn't magic – it's just a naming convention for strings
+    DOM: vtree$ // the $ isn't magic – it's just a naming convention for streams
   };
   return sinks;
 }
